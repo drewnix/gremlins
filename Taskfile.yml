@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  hello:
+    cmds:
+      - echo 'Hello World from Task!'
+    silent: true
+
+  build:
+    cmds:
+      - go build -v gremlins/cmd/logservice
+      - go build -v gremlins/cmd/registryservice
+
+  clean:
+    cmds:
+      - rm logservice
+      - rm registryservice
