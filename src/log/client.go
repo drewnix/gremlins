@@ -3,7 +3,7 @@ package log
 import (
 	"bytes"
 	"fmt"
-	"gremlins/registry"
+	"gremlins/src/registry"
 	stlog "log"
 	"net/http"
 )

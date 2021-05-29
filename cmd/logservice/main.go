@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"gremlins/log"
-	"gremlins/registry"
-	"gremlins/service"
+	"gremlins/src/log"
+	"gremlins/src/registry"
+	"gremlins/src/service"
 	stlog "log"
 )
 
@@ -20,6 +20,7 @@ func main() {
 	r.ServiceURL = serviceAddress
 	r.RequiredServices = make([]registry.ServiceName, 0)
 	r.ServiceUpdateURL = r.ServiceURL + "/services"
+	r.HeartbeatURL = r.ServiceURL + "/heartbeat"
 	ctx, err := service.Start(
 		context.Background(),
 		host,

@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
-	"gremlins/registry"
+	"gremlins/src/registry"
 	"log"
 	"net/http"
 )

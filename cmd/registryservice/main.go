@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"gremlins/registry"
+	"gremlins/src/registry"
 	"log"
 	"net/http"
 )
 
 func main() {
+	registry.SetupRegistryService()
+
 	http.Handle("/services", &registry.RegistryService{})
 
 	ctx, cancel := context.WithCancel(context.Background())
