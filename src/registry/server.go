@@ -29,7 +29,7 @@ func (r *registry) add(reg Registration) error {
 	}
 	r.notify(patch{
 		Added: []patchEntry{
-			patchEntry{
+			{
 				Name: reg.ServiceName,
 				URL:  reg.ServiceURL,
 			},
@@ -95,7 +95,7 @@ func (r *registry) heartbeat(freq time.Duration) {
 						success = false
 						r.remove(reg.ServiceURL)
 					}
-					time.Sleep(1 * time.Second)
+					time.Sleep(2 * time.Second)
 				}
 			}(reg)
 			wg.Wait()

@@ -5,6 +5,8 @@ import (
 	stlog "log"
 	"net/http"
 	"os"
+
+	"github.com/labstack/echo"
 )
 
 var log *stlog.Logger
@@ -24,14 +26,14 @@ func Run(destination string) {
 	log = stlog.New(fileLog(destination), "", stlog.LstdFlags)
 }
 
-func RegisterHandlers() {
-	http.HandleFunc("/log", func(w http.ResponseWriter, r *http.Request) {
-		msg, err := ioutil.ReadAll(r.Body)
+func RegisterHandlers(e *echo.Echo) {
+	e.GET("/log", func(c echo.Context) error {
+		msg, err := ioutil.ReadAll(c.Request().Body)
 		if err != nil || len(msg) == 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			return
+			return &echo.HTTPError{Code: http.StatusBadRequest, Message: "invalid request"}
 		}
 		write(string(msg))
+		return nil
 	})
 }
 

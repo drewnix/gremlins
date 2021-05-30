@@ -5,26 +5,32 @@ import (
 	"fmt"
 	"gremlins/src/registry"
 	"log"
-	"net/http"
+
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
-func Start(ctx context.Context, host, port string, reg registry.Registration, RegisterHandlersFunc func()) (context.Context, error) {
-	RegisterHandlersFunc()
-	ctx = startService(ctx, reg.ServiceName, host, port)
-	err := registry.RegisterService(reg)
+func Start(ctx context.Context, host, port string, reg registry.Registration, RegisterHandlersFunc func(e *echo.Echo)) (context.Context, error) {
+	e := echo.New()
+	RegisterHandlersFunc(e)
+
+	ctx = startService(ctx, reg.ServiceName, e, host, port)
+	err := registry.RegisterService(reg, e)
 	if err != nil {
 		return ctx, err
 	}
 	return ctx, nil
 }
 
-func startService(ctx context.Context, serviceName registry.ServiceName, host, port string) context.Context {
+func startService(ctx context.Context, serviceName registry.ServiceName, e *echo.Echo, host, port string) context.Context {
 	ctx, cancel := context.WithCancel(ctx)
-	var srv http.Server
-	srv.Addr = ":" + port
+
+	srvPort := ":" + port
 
 	go func() {
-		log.Println(srv.ListenAndServe())
+		e.Use(middleware.Logger())
+		// Start server
+		e.Logger.Fatal(e.Start(srvPort))
 		cancel()
 	}()
 
@@ -36,7 +42,8 @@ func startService(ctx context.Context, serviceName registry.ServiceName, host, p
 		if err != nil {
 			log.Println(err)
 		}
-		srv.Shutdown(ctx)
+		// srv.Shutdown(ctx)
+		e.Logger.Fatal(ctx)
 		cancel()
 	}()
 	return ctx

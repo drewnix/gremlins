@@ -14,6 +14,7 @@ const (
 	LogService     = ServiceName("LogService")
 	GradingService = ServiceName("GradingService")
 	TeacherPortal  = ServiceName("TeacherPortal")
+	GremlinService = ServiceName("GremlinService")
 )
 
 type patchEntry struct {
