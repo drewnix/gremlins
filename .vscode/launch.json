@@ -10,7 +10,15 @@
             "request": "launch",
             "mode": "debug",
             "program": "${file}"
+        },
+        {
+            "name": "Launch Keeper",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "/Users/atanner/Projects/personal/gremlins/cmd/keeper/main.go"
         }
+
 
     ]
 }

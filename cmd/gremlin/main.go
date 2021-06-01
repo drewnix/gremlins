@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"gremlins/src/gremlin"
 	"gremlins/src/log"
@@ -11,7 +12,10 @@ import (
 )
 
 func main() {
-	host, port := "localhost", "7000"
+	host := "localhost"
+	var port string = "7000"
+	flag.StringVar(&port, "port", "7000", "port to bind to")
+	flag.Parse()
 	serviceAddress := fmt.Sprintf("http://%v:%v", host, port)
 
 	var r registry.Registration

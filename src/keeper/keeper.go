@@ -10,9 +10,12 @@ import (
 
 func GetGremlins() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		if gremlinProvider, err := registry.GetProvider(registry.GremlinService); err == nil {
-			fmt.Printf("Gremlin service found at: %v\n", gremlinProvider)
+		var gremlins []string
+		gremlins, err := registry.GetGremlins()
+		if err != nil {
+			fmt.Println(err)
+			return err
 		}
-		return c.JSON(http.StatusOK, "gremlins")
+		return c.JSON(http.StatusOK, gremlins)
 	}
 }

@@ -108,7 +108,7 @@ func (p *providers) Update(pat patch) {
 	}
 }
 
-func (p providers) get(name ServiceName) (string, error) {
+func (p providers) getOne(name ServiceName) (string, error) {
 	providers, ok := p.services[name]
 	if !ok {
 		return "", fmt.Errorf("no providers available for service %v", name)
@@ -117,11 +117,19 @@ func (p providers) get(name ServiceName) (string, error) {
 	return providers[idx], nil
 }
 
-func GetProvider(name ServiceName) (string, error) {
-	return prov.get(name)
+func (p providers) get(name ServiceName) ([]string, error) {
+	providers, ok := p.services[name]
+	if !ok {
+		return []string{}, fmt.Errorf("no providers available for service %v", name)
+	}
+	return providers, nil
 }
 
-func GetGremlins() (string, error) {
+func GetProvider(name ServiceName) (string, error) {
+	return prov.getOne(name)
+}
+
+func GetGremlins() ([]string, error) {
 	return prov.get(GremlinService)
 }
 

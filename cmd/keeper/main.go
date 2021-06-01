@@ -15,9 +15,9 @@ func main() {
 	serviceAddress := fmt.Sprintf("http://%v:%v", host, port)
 
 	var r registry.Registration
-	r.ServiceName = registry.GremlinService
+	r.ServiceName = registry.KeeperService
 	r.ServiceURL = serviceAddress
-	r.RequiredServices = []registry.ServiceName{registry.LogService}
+	r.RequiredServices = []registry.ServiceName{registry.LogService, registry.GremlinService}
 	r.ServiceUpdateURL = r.ServiceURL + "/services"
 	r.HeartbeatURL = r.ServiceURL + "/heartbeat"
 
@@ -36,5 +36,5 @@ func main() {
 		log.SetClientLogger(logProvider, r.ServiceName)
 	}
 	<-ctx.Done()
-	fmt.Println("Shutting down gremlinservice")
+	fmt.Println("Shutting down keeper service")
 }

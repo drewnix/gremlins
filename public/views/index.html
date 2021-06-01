@@ -4,7 +4,7 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
-        <title>TODO App</title>
+        <title>Gremlins</title>
 
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
@@ -24,18 +24,19 @@
     </head>
     <body>
         <div class="container">
+            <img src="static/gremlin.png" alt="gremlin" style="width:48px;height:48px;"/>
             <div class="row">
                 <div class="col-md-4">
-                    <h2>My Tasks</h2>
+                    <h2 style="color:forestgreen;"><b>Gremlins</b></h2>
+
                     <ul class="list-group">
-                        <li class="list-group-item" v-for="task in tasks">
-                            {{ task.name }}
-                            <span class="pull-right">
-                                <button class="btn btn-xs btn-danger" v-on:click="deleteTask($index)">
-                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                </button>
-                            </span>
-                        </li>
+                        {{ with .gremlins }}
+                            {{ range . }}
+                            <li class="list-group-item">
+                                {{ . }}
+                            </li>
+                            {{ end }}
+                        {{ end }}
                     </ul>
                     <div class="input-group">
                         <input type="text" 
