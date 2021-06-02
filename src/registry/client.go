@@ -9,22 +9,29 @@ import (
 	"net/http"
 	"net/url"
 	"sync"
+
+	"github.com/labstack/echo"
 )
 
-func RegisterService(r Registration) error {
+func RegisterService(r Registration, e *echo.Echo) error {
 	heartbeatURL, err := url.Parse(r.HeartbeatURL)
 	if err != nil {
 		return err
 	}
-	http.HandleFunc(heartbeatURL.Path, func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
+	// http.HandleFunc(heartbeatURL.Path, func(w http.ResponseWriter, r *http.Request) {
+	// 	w.WriteHeader(http.StatusOK)
+	// })
+
+	e.GET(heartbeatURL.Path, func(c echo.Context) error {
+		return c.String(http.StatusOK, "OK")
 	})
 
 	ServiceUpdateURL, err := url.Parse(r.ServiceUpdateURL)
 	if err != nil {
 		return err
 	}
-	http.Handle(ServiceUpdateURL.Path, &serviceUpdateHandler{})
+	// http.Handle(ServiceUpdateURL.Path, &serviceUpdateHandler{})
+	e.POST(ServiceUpdateURL.Path, serviceUpdate)
 	buf := new(bytes.Buffer)
 	enc := json.NewEncoder(buf)
 	err = enc.Encode(r)
@@ -41,23 +48,21 @@ func RegisterService(r Registration) error {
 	return nil
 }
 
-type serviceUpdateHandler struct{}
-
-func (suh serviceUpdateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func serviceUpdate(c echo.Context) error {
+	r := c.Request()
 	if r.Method != http.MethodPost {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
+		return &echo.HTTPError{Code: http.StatusMethodNotAllowed, Message: "POST only supported for service updates"}
 	}
 	dec := json.NewDecoder(r.Body)
 	var p patch
 	err := dec.Decode(&p)
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusBadRequest)
-		return
+		return &echo.HTTPError{Code: http.StatusBadRequest, Message: "invalid request"}
 	}
 	fmt.Printf("Update received: %+v\n", p)
 	prov.Update(p)
+	return nil
 }
 
 func ShutdownService(serviceURL string) error {
@@ -103,7 +108,7 @@ func (p *providers) Update(pat patch) {
 	}
 }
 
-func (p providers) get(name ServiceName) (string, error) {
+func (p providers) getOne(name ServiceName) (string, error) {
 	providers, ok := p.services[name]
 	if !ok {
 		return "", fmt.Errorf("no providers available for service %v", name)
@@ -112,8 +117,20 @@ func (p providers) get(name ServiceName) (string, error) {
 	return providers[idx], nil
 }
 
+func (p providers) get(name ServiceName) ([]string, error) {
+	providers, ok := p.services[name]
+	if !ok {
+		return []string{}, fmt.Errorf("no providers available for service %v", name)
+	}
+	return providers, nil
+}
+
 func GetProvider(name ServiceName) (string, error) {
-	return prov.get(name)
+	return prov.getOne(name)
+}
+
+func GetGremlins() ([]string, error) {
+	return prov.get(GremlinService)
 }
 
 var prov = providers{

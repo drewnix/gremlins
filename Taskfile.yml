@@ -5,12 +5,12 @@ tasks:
     cmds:
       - go build -v gremlins/cmd/logservice
       - go build -v gremlins/cmd/registryservice
-      - go build -v gremlins/cmd/gradingservice
-      - go build -v gremlins/cmd/teacherportal
+      - go build -v gremlins/cmd/gremlin
+      - go build -v gremlins/cmd/keeper
 
   clean:
     cmds:
       - rm logservice
       - rm registryservice
-      - rm gradingservice
-      - rm teacherportal
+      - rm gremlin
+      - rm keeper

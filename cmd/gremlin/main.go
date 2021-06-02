@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
-	"gremlins/src/grades"
+	"gremlins/src/gremlin"
 	"gremlins/src/log"
 	"gremlins/src/registry"
 	"gremlins/src/service"
@@ -11,11 +12,14 @@ import (
 )
 
 func main() {
-	host, port := "localhost", "6000"
+	host := "localhost"
+	var port string = "7000"
+	flag.StringVar(&port, "port", "7000", "port to bind to")
+	flag.Parse()
 	serviceAddress := fmt.Sprintf("http://%v:%v", host, port)
 
 	var r registry.Registration
-	r.ServiceName = registry.GradingService
+	r.ServiceName = registry.GremlinService
 	r.ServiceURL = serviceAddress
 	r.RequiredServices = []registry.ServiceName{registry.LogService}
 	r.ServiceUpdateURL = r.ServiceURL + "/services"
@@ -26,7 +30,7 @@ func main() {
 		host,
 		port,
 		r,
-		grades.RegisterHandlers,
+		gremlin.RegisterHandlers,
 	)
 	if err != nil {
 		stlog.Fatal(err)
@@ -36,5 +40,5 @@ func main() {
 		log.SetClientLogger(logProvider, r.ServiceName)
 	}
 	<-ctx.Done()
-	fmt.Println("Shutting down gradingservice")
+	fmt.Println("Shutting down gremlinservice")
 }
