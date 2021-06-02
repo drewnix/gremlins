@@ -1,7 +1,5 @@
 # Gremlins
 
-## Introduction
-
 Gremlins is a portfolio project to build a distributed application for orchestrating independent 
 agents (called "gremlins"). 
 
